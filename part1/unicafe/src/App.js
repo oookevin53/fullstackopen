@@ -20,6 +20,9 @@ const App = () => {
   const handleNeutClick = () => setNeutral(neutral + 1)
   const handleBadClick = () => setBad(bad + 1)
 
+  const average = (a, b, c) => (a + b + c)/3
+  const positivePercent = (a, b, c) => a/(a+b+c)
+
   return (
     <div>
       <Heading title="give feedback" />
@@ -30,6 +33,9 @@ const App = () => {
       <Stats type="good" count={good} />
       <Stats type="neutral" count={neutral} />
       <Stats type="bad" count={bad} />
+      <Stats type="all" count={good + neutral + bad} />
+      <Stats type="average" count={average(good, neutral, bad)} />
+      <Stats type="positive" count={positivePercent(good, neutral, bad)} />
     </div>
   )
 }
