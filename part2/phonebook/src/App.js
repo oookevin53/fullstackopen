@@ -47,7 +47,6 @@ const App = () => {
     setFilter(event.target.value)
   }
   
-  
   return (
     <div>
       <h2>Phonebook</h2>
