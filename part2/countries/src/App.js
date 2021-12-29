@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import SearchBar from "./components/SearchBar"
 import Countries from "./components/Countries"
-import CountryDetail from './components/CountryDetail'
+import CountryDetail from "./components/CountryDetail"
 
 import axios from 'axios'
 
 const App = () => {
   const [countries, setCountries] = useState([])
   const [search, setSearch] = useState('')
-  const [selected, setSelected] = useState('')
+  const [weather, setWeather] = useState('')
 
   useEffect(() => {
     axios
@@ -18,28 +18,34 @@ const App = () => {
       })
   }, [])
 
+  useEffect(() => {
+    const API_KEY = process.env.REACT_APP_API_KEY
+    if (filteredCountries.length === 1) {
+        const country = filteredCountries[0]
+        axios
+          .get(`https://api.openweathermap.org/data/2.5/weather?q=${country.capital}&appid=${API_KEY}&units=imperial`)
+          .then(response => {
+              setWeather(response.data);
+          })
+    }
+}, [search])
+
   const filteredCountries = countries.filter(country => country.name.common.toLowerCase().includes(search.toLowerCase()))
   
   const handleSearch = (event) => {
-    setSelected('')
     setSearch(event.target.value)
   }
 
   const handleClick = (country) => () => {
-    setSelected(country)
+    setSearch(country.name.common)
   }
-  
 
   return (
     <>
     <SearchBar search={search} handleSearch={handleSearch} />
-    {search
+    {(filteredCountries.length !== 1)
       ? <Countries countries={filteredCountries} handleClick={handleClick} />
-      : <></>
-    }
-    {selected
-      ? <CountryDetail country={selected} />
-      : <></>
+      : <CountryDetail country={filteredCountries[0]} weather={weather}/>
     }
     </>
   )
