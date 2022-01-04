@@ -18,30 +18,31 @@ const App = () => {
         setPersons(response.data)
       })
   }, [])
-
-  const filteredPeople = persons.filter(person => person.name.toLowerCase().includes(filter.toLowerCase()))
   
-  const uniqueValues = new Set(persons.map(p => p.name))
-
   const addPerson = (event) => {
     event.preventDefault()
+    
     const personObject = {
       name: newName,
       number: newNum
     }
-
+    
     if (uniqueValues.has(newName)) {
       alert(`${newName} is already added to phonebook`)
     } else {
       axios
-        .post('http://localhost:3001/persons', personObject)
-        .then(response => {
-          setPersons(persons.concat(response.data))
-          setNewName('')
-          setNewNum('')
-        })
+      .post('http://localhost:3001/persons', personObject)
+      .then(response => {
+        setPersons(persons.concat(response.data))
+        setNewName('')
+        setNewNum('')
+      })
     }
   }
+  
+  const filteredPeople = persons.filter(person => person.name.toLowerCase().includes(filter.toLowerCase()))
+  
+  const uniqueValues = new Set(persons.map(p => p.name))
 
   const handleNameChange = (event) => {
     setNewName(event.target.value)
@@ -62,7 +63,7 @@ const App = () => {
       <h3>Add a new</h3>
       <PersonForm 
         name={newName} 
-        num={newNum}
+        number={newNum}
         handleName={handleNameChange}
         handleNum={handleNumChange}
         submitForm={addPerson}
