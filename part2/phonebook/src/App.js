@@ -15,7 +15,6 @@ const App = () => {
     axios
       .get('http://localhost:3001/persons')
       .then(response => {
-        console.log('promise fulfilled')
         setPersons(response.data)
       })
   }, [])
@@ -28,16 +27,19 @@ const App = () => {
     event.preventDefault()
     const personObject = {
       name: newName,
-      number: newNum,
-      id: persons.length + 1
+      number: newNum
     }
 
     if (uniqueValues.has(newName)) {
       alert(`${newName} is already added to phonebook`)
     } else {
-      setPersons(persons.concat(personObject))
-      setNewName('')
-      setNewNum('')
+      axios
+        .post('http://localhost:3001/persons', personObject)
+        .then(response => {
+          setPersons(persons.concat(response.data))
+          setNewName('')
+          setNewNum('')
+        })
     }
   }
 
