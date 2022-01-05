@@ -28,7 +28,17 @@ const App = () => {
     }
     
     if (uniqueValues.has(newName)) {
-      alert(`${newName} is already added to phonebook`)
+      const confirm = window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)
+      if (confirm) {
+        const person = persons.find(n => n.name === newName)
+        const changedPerson = { ...person, number: newNum }
+        personService
+          .update(changedPerson.id, changedPerson).then(returnedPerson => {
+            setPersons(persons.map(person => person.id !== changedPerson.id ? person : returnedPerson))
+          })
+        setNewName('')
+        setNewNum('')
+      }
     } else {
       personService
         .create(personObject)
