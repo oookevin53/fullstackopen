@@ -50,6 +50,17 @@ const App = () => {
     }
   }
   
+  const handleDelete = (id) => () => {
+    const person = persons.find(n => n.id === id)
+    const confirm = window.confirm(`Delete ${person.name} ?`)
+    if (confirm) {
+      personService
+      .remove(id)
+      .then(() => setPersons(persons.filter(p => p.id !== id))
+      )
+    }
+  }
+
   const filteredPeople = persons.filter(person => person.name.toLowerCase().includes(filter.toLowerCase()))
   
   const uniqueValues = new Set(persons.map(p => p.name))
@@ -64,17 +75,6 @@ const App = () => {
 
   const handleSearch = (event) => {
     setFilter(event.target.value)
-  }
-
-  const handleDelete = (id) => () => {
-    const person = persons.find(n => n.id === id)
-    const confirm = window.confirm(`Delete ${person.name} ?`)
-    if (confirm) {
-      personService
-      .remove(id)
-      .then(() => setPersons(persons.filter(p => p.id !== id))
-      )
-    }
   }
   
   return (
