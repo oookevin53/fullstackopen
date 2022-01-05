@@ -55,6 +55,17 @@ const App = () => {
   const handleSearch = (event) => {
     setFilter(event.target.value)
   }
+
+  const handleDelete = (id) => () => {
+    const person = persons.find(n => n.id === id)
+    const confirm = window.confirm(`Delete ${person.name} ?`)
+    if (confirm) {
+      personService
+      .remove(id)
+      .then(() => setPersons(persons.filter(p => p.id !== id))
+      )
+    }
+  }
   
   return (
     <div>
@@ -69,7 +80,7 @@ const App = () => {
         submitForm={addPerson}
       />
       <h3>Numbers</h3>
-      <Persons persons={filteredPeople} />
+      <Persons persons={filteredPeople} handleDelete={handleDelete} />
     </div>
   )
 }
