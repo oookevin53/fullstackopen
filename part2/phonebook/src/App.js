@@ -3,9 +3,7 @@ import Filter from "./components/Filter"
 import PersonForm from "./components/PersonForm"
 import Persons from "./components/Persons"
 import Notification from './components/Notification'
-
 import personService from './services/persons'
-import './index.css'
 
 const App = () => {
   const [persons, setPersons] = useState([])
@@ -13,6 +11,7 @@ const App = () => {
   const [newNum, setNewNum] = useState('')
   const [filter, setFilter] = useState('')
   const [message, setMessage] = useState(null)
+  const [color, setColor] = useState("")
   
   useEffect(()=> {
     personService
@@ -36,29 +35,32 @@ const App = () => {
         const person = persons.find(n => n.name === newName)
         const changedPerson = { ...person, number: newNum }
         personService
-          .update(changedPerson.id, changedPerson).then(returnedPerson => {
+          .update(changedPerson.id, changedPerson)
+          .then(returnedPerson => {
             setPersons(persons.map(person => person.id !== changedPerson.id ? person : returnedPerson))
+            setMessage(`Updated contact for ${newName}`)
+            setColor("green")
           })
-        setMessage(`Updated contact for ${newName}`)
-        setTimeout(() => {
-          setMessage(null)
-        }, 5000)
-        setNewName('')
-        setNewNum('')
-      }
+          .catch(error => {
+            setMessage(`Information of "${newName}" has already been removed from server`)
+            setColor("red")
+          })
+        }
     } else {
       personService
         .create(personObject)
         .then(returnedObject => {
           setPersons(persons.concat(returnedObject))
           setMessage(`Added contact for ${newName}`)
-          setTimeout(() => {
-            setMessage(null)
-          }, 5000)
-          setNewName('')
-          setNewNum('')
-      })
+          setColor("green")
+        })
     }
+    setTimeout(() => {
+      setMessage(null)
+      setColor("")
+    }, 5000)
+    setNewName('')
+    setNewNum('')
   }
   
   const handleDelete = (id) => () => {
@@ -67,7 +69,16 @@ const App = () => {
     if (confirm) {
       personService
       .remove(id)
-      .then(() => setPersons(persons.filter(p => p.id !== id))
+      .then(
+        () => {
+          setPersons(persons.filter(p => p.id !== id))
+          setMessage(`Deleted ${person.name}`)
+          setColor("green")
+          setTimeout(() => {
+            setMessage(null)
+            setColor("")
+          }, 5000)
+        }
       )
     }
   }
@@ -91,7 +102,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
-      <Notification message={message} />
+      <Notification message={message} color={color}/>
       <Filter filter={filter} handleSearch={handleSearch} />
       <h3>Add a new</h3>
       <PersonForm 
