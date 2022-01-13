@@ -55,6 +55,36 @@ app.delete("/api/persons/:id", (request, response) => {
   response.status(204).end()
 })
 
+const getRandomIntInclusive = (min, max) => {
+  min = Math.ceil(min)
+  max = Math.floor(max)
+  return Math.floor(Math.random() * (max - min + 1) + min)
+}
+
+app.post("/api/persons", (request, response) => {
+  const body = request.body
+
+  if (!body.name) {
+    return response.status(400).json({
+      error: "name missing"
+    })
+  } else if (!body.number) {
+    return response.status(400).json({
+      error: "number missing"
+    })
+  }
+
+  const person = {
+    id: getRandomIntInclusive(1,1000),
+    name: body.name,
+    number: body.number
+  }
+
+  persons = persons.concat(person)
+
+  response.json(person)
+})
+
 const PORT = 3001
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`)
